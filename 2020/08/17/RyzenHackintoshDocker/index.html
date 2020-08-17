@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="google-site-verification" content="TZE0rZyIqLl10trYu3BWBWa1Vmz6HFwhb2OcNEK4u-s" />
+     <link rel="shortcut icon" href= /img/icon.jpg >
+    <title>
+        Geyinchi&#39;s Blog
+    </title>
+    <meta name="description" content= 嘿，我是葛胤池～这是我的博客。欢迎访问！ >
+    <meta name="keywords" content= Blog,Geyinchi,葛胤池 >
+    
+<link rel="stylesheet" href="/libs/highlight/styles/monokai-sublime.css">
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.0.2"></head>
+<body id="bodyx">
+    <div class="hd posts">
+    <a href="/index.html"><i class="fa fa-home
+ replay-btn" aria-hidden="true"></i></a>
+    <div class="post-title">
+        <p>
+            amd黑苹果docker折腾记录
+        </p>
+        <hr>
+    </div>
+    <div class="post-content">
+        <h1 id="amd黑苹果docker折腾记录"><a href="#amd黑苹果docker折腾记录" class="headerlink" title="amd黑苹果docker折腾记录"></a>amd黑苹果docker折腾记录</h1><p>虽然AMD黑苹果目前无法使用VMware、PD和docker desktop之类的使用英特尔CPU虚拟华技术的应用，但听说基于virtualbox的docker toolbox还是能用的，我就打算安个docker toolbox来用。没想到坑是真的多。下面讲讲我的安装和使用经历。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>本人黑苹果硬件配置为Ryzen 3700x + Asus Prime x570-p，显卡是rx 570，580 2048sp刷的，网卡intel ax200。系统版本10.15.6，引导是oc 0.5.7</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>bios虚拟化先打开，然后去<a target="_blank" rel="noopener" href="https://docs.docker.com/toolbox/toolbox_install_mac/">https://docs.docker.com/toolbox/toolbox_install_mac/</a> 下载最新的mac版docker toolbox安装。本来以为万事大吉，结果quickstart terminal报错启动不了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error with pre-create check: &quot;This computer doesn&#39;t have VT-X&#x2F;AMD-v enabled. Enabling it in the BIOS is mandatory&quot;</span><br></pre></td></tr></table></figure>
+<p>发现时创建docker-machine时会执行虚拟化开关检查。但貌似mac的dockermachine不支持amd-v？开了也会报错，然后<code>docker-machine create --help</code>一下试试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">Usage: docker-machine create [OPTIONS] [arg...]</span><br><span class="line"></span><br><span class="line">Create a machine</span><br><span class="line"></span><br><span class="line">Description:</span><br><span class="line">   Run &#39;docker-machine create --driver name --help&#39; to include the create flags for that driver in the help text.</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">   </span><br><span class="line">   --driver, -d &quot;virtualbox&quot;                                        Driver to create machine with. [$MACHINE_DRIVER]</span><br><span class="line">   --engine-env [--engine-env option --engine-env option]                        Specify environment variables to set in the engine</span><br><span class="line">   --engine-insecure-registry [--engine-insecure-registry option --engine-insecure-registry option]    Specify insecure registries to allow with the created engine</span><br><span class="line">   --engine-install-url &quot;https:&#x2F;&#x2F;get.docker.com&quot;                            Custom URL to use for engine installation [$MACHINE_DOCKER_INSTALL_URL]</span><br><span class="line">   --engine-label [--engine-label option --engine-label option]                        Specify labels for the created engine</span><br><span class="line">   --engine-opt [--engine-opt option --engine-opt option]                        Specify arbitrary flags to include with the created engine in the form flag&#x3D;value</span><br><span class="line">   --engine-registry-mirror [--engine-registry-mirror option --engine-registry-mirror option]        Specify registry mirrors to use [$ENGINE_REGISTRY_MIRROR]</span><br><span class="line">   --engine-storage-driver                                         Specify a storage driver to use with the engine</span><br><span class="line">   --swarm                                                Configure Machine to join a Swarm cluster</span><br><span class="line">   --swarm-addr                                             addr to advertise for Swarm (default: detect and use the machine IP)</span><br><span class="line">   --swarm-discovery                                             Discovery service to use with Swarm</span><br><span class="line">   --swarm-experimental                                            Enable Swarm experimental features</span><br><span class="line">   --swarm-host &quot;tcp:&#x2F;&#x2F;0.0.0.0:3376&quot;                                    ip&#x2F;socket to listen on for Swarm master</span><br><span class="line">   --swarm-image &quot;swarm:latest&quot;                                        Specify Docker image to use for Swarm [$MACHINE_SWARM_IMAGE]</span><br><span class="line">   --swarm-join-opt [--swarm-join-opt option --swarm-join-opt option]                    Define arbitrary flags for Swarm join</span><br><span class="line">   --swarm-master                                            Configure Machine to be a Swarm master</span><br><span class="line">   --swarm-opt [--swarm-opt option --swarm-opt option]                            Define arbitrary flags for Swarm master</span><br><span class="line">   --swarm-strategy &quot;spread&quot;                                        Define a default scheduling strategy for Swarm</span><br><span class="line">   --tls-san [--tls-san option --tls-san option]                            Support extra SANs for TLS certs</span><br><span class="line">   --virtualbox-boot2docker-url                                     The URL of the boot2docker image. Defaults to the latest available version [$VIRTUALBOX_BOOT2DOCKER_URL]</span><br><span class="line">   --virtualbox-cpu-count &quot;1&quot;                                        number of CPUs for the machine (-1 to use the number of CPUs available) [$VIRTUALBOX_CPU_COUNT]</span><br><span class="line">   --virtualbox-disk-size &quot;20000&quot;                                    Size of disk for host in MB [$VIRTUALBOX_DISK_SIZE]</span><br><span class="line">   --virtualbox-host-dns-resolver                                    Use the host DNS resolver [$VIRTUALBOX_HOST_DNS_RESOLVER]</span><br><span class="line">   --virtualbox-hostonly-cidr &quot;192.168.99.1&#x2F;24&quot;                                Specify the Host Only CIDR [$VIRTUALBOX_HOSTONLY_CIDR]</span><br><span class="line">   --virtualbox-hostonly-nicpromisc &quot;deny&quot;                                Specify the Host Only Network Adapter Promiscuous Mode [$VIRTUALBOX_HOSTONLY_NIC_PROMISC]</span><br><span class="line">   --virtualbox-hostonly-nictype &quot;82540EM&quot;                                Specify the Host Only Network Adapter Type [$VIRTUALBOX_HOSTONLY_NIC_TYPE]</span><br><span class="line">   --virtualbox-hostonly-no-dhcp                                    Disable the Host Only DHCP Server [$VIRTUALBOX_HOSTONLY_NO_DHCP]</span><br><span class="line">   --virtualbox-import-boot2docker-vm                                     The name of a Boot2Docker VM to import [$VIRTUALBOX_BOOT2DOCKER_IMPORT_VM]</span><br><span class="line">   --virtualbox-memory &quot;1024&quot;                                        Size of memory for host in MB [$VIRTUALBOX_MEMORY_SIZE]</span><br><span class="line">   --virtualbox-nat-nictype &quot;82540EM&quot;                                    Specify the Network Adapter Type [$VIRTUALBOX_NAT_NICTYPE]</span><br><span class="line">   --virtualbox-no-dns-proxy                                        Disable proxying all DNS requests to the host [$VIRTUALBOX_NO_DNS_PROXY]</span><br><span class="line">   --virtualbox-no-share                                        Disable the mount of your home directory [$VIRTUALBOX_NO_SHARE]</span><br><span class="line">   --virtualbox-no-vtx-check                                        Disable checking for the availability of hardware virtualization before the vm is started [$VIRTUALBOX_NO_VTX_CHECK]</span><br><span class="line">   --virtualbox-share-folder                                         Mount the specified directory instead of the default home location. Format: dir:name [$VIRTUALBOX_SHARE_FOLDER]</span><br><span class="line">   --virtualbox-ui-type &quot;headless&quot;                                    Specify the UI Type: (gui|sdl|headless|separate) [$VIRTUALBOX_UI_TYPE]</span><br></pre></td></tr></table></figure>
+<p>发现有一个选项<code>--virtualbox-no-vtx-check</code>，禁用硬件虚拟化检查。果断加上这个参数手动创建<code>default</code>虚拟机：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-machine create default --virtualbox-no-vtx-check</span><br></pre></td></tr></table></figure>
+<p>正常来讲应该成功了。不过它会去github下载Boot2Docker.iso，下载速度感人，于是我手动去<a target="_blank" rel="noopener" href="https://github.com/boot2docker/boot2docker/releases">https://github.com/boot2docker/boot2docker/releases</a> 下载了ios包放到<code>～/.docker/machine/cache/</code>下面就可以从本地读取了。<br>接下来运行quickstart terminal就一切正常了！</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>为了方便正常使用命令行，可以设置以下环境变量：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export DOCKER_HOST=tcp://192.168.99.100:2376</span><br><span class="line">export DOCKER_MACHINE_NAME=default</span><br><span class="line">export DOCKER_TLS_VERIFY=1</span><br><span class="line">export DOCKER_CERT_PATH=/Users/geyinchi/.docker/machine/machines/default</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果<code>～/.docker/machine/machines/default</code>下面没有相关证书，就把<code>～/.docker/machine/certs</code>下面文件都拷过去（应该不用都拷过去，懒得分辨了）</p>
+</blockquote>
+<p>我把上面四行写在了<code>~/.bash_profile</code>里，发现不自动生效还要source一下，后来想起来macos要写在<code>~/.zshrc</code>里。干脆在<code>~/.zshrc</code>加了一行<code>source ~/.bash_profile</code><br>运行docker ps看一下：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(base) geyinchi@geyinchis-Mac-Pro ~ % docker ps</span><br><span class="line">CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES</span><br></pre></td></tr></table></figure>
+<p>熟悉的界面出来了，搞定！</p>
+<h2 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h2><p>一次新建容器需要挂载volumes，结果发现挂载进去的目录下面是空的。百度了半天都说的是默认只能挂载<code>/Users</code>目录。但我确实是在桌面建的。后来发现原来还需要手动去虚拟机里挂载共享目录。去virtualbox新建共享文件夹，比如我在桌面新建了个docker文件夹专门用来放docker容器所需文件的，到default虚拟机设置里设置一下共享文件夹。</p>
+<p><a href="RyzenHackintoshDocker/virtualbox.png">img</a></p>
+<p>然后去虚拟机里，可以从virtualbox进，或者直接<code>docker-machine ssh default</code>进入命令行。</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /</span><br><span class="line">sudo mkdir docker</span><br><span class="line">sudo mount -t vboxsf docker[virtualbox共享文件夹的名称] /docker[要挂载的位置]</span><br></pre></td></tr></table></figure>
+<p>然后docker容器启动参数里宿主机目录位置就可以写/docker/…了，比如我的docker-compose.yml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:latest</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">80</span><span class="string">:80</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/docker/nginx/conf.d:/etc/nginx/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/docker/nginx/log:/var/log/nginx</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/docker/nginx/html:/etc/nginx/html</span></span><br></pre></td></tr></table></figure>
+<p>ps：也尝试过直接挂载/Users，结果挂载各种权限问题。甚至还要去下载我onedrive文件夹的数据。那还是算了吧，挂载一个文件夹够了。</p>
+<p>暂时告一段落了。docker使用基本都正常了。以后有问题再继续吧。toolbox不好的地方就在容器服务的ip都要192.168.99.100（默认），除非去virtualbox端口转发。略麻烦</p>
+
+    </div>
+
+    
+        <hr class="fhr">
+        <div id="vcomments"></div>
+    
+</div>
+    <div class="footer" id="footer">
+    <p><h4>版权所有 © 2020 | 作者: ikechan8370 | 主题 By <a class="theme-author" target="_blank" rel="noopener" href="https://github.com/Xunzhuo/hexo-theme-coder" style="font-size:14px; color: #969696">Coder</a></h4>
+    
+    <label class="el-switch el-switch-blue el-switch-sm" style="vertical-align: sub;">
+        <input type="checkbox" name="switch" id="update_style">
+        <span class="el-switch-style"></span>
+    </label>
+
+    <!--         <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
+    document.write(unescape("%3Cspan id='cnzz_stat_icon_1278548644'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/stat.php%3Fid%3D1278548644%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script> -->
+</p>
+</div>
+
+<input type="hidden" id="web_style" value="black">
+<input type="hidden" id="valine_appid" value="F6EQuj7PCqqzJ8nQdm5V51Ex-gzGzoHsz">
+<input type="hidden" id="valine_appKey" value="JXvEBkqW2MHfYdY0w2rTjJkt">
+
+<script src="/libs/jquery.min.js"></script>
+
+
+<script src="/libs/highlight/highlight.pack.js"></script>
+
+<script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+
+<script src="/js/js.js"></script>
+
+<style type="text/css">
+.v * {
+color: #698fca;
+}
+.v .vlist .vcard .vhead .vsys {
+color: #3a3e4a;
+}
+.v .vlist .vcard .vh .vmeta .vat {
+color: #638fd5;
+}
+.v .vlist .vcard .vhead .vnick {
+color: #6ba1ff;
+}
+.v a {
+color: #8696b1;
+}
+.v .vlist .vcard .vhead .vnick:hover {
+color: #669bfc;
+}
+</style>
+    <script type="text/javascript" color="173,174,173" opacity='1' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+</body>
+</html>
